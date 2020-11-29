@@ -19,7 +19,8 @@ var root = N("A",
                  L("G")));
 
 var tree = new DrawingTree(root) {
-    WidthScaleFactor = 0.6f,
+    WidthScaleFactor = 0.8f,
+    HeightScaleFactor = 1.2f,
 };
 
 var legend = new WebBrowser {
@@ -28,7 +29,7 @@ var legend = new WebBrowser {
 };
 legend.DocumentCompleted += delegate {
     var oldSize = legend.Document.Body.ScrollRectangle.Size;
-    var newSize = new SizeF(width: oldSize.Width * 0.7f,
+    var newSize = new SizeF(width: oldSize.Width * 0.8f,
                             height: oldSize.Height * 1.1f);
     legend.Size = Size.Round(newSize);
 };
@@ -78,6 +79,11 @@ internal sealed class DrawingTree {
     internal float WidthScaleFactor
     {
         init => Viewer.Width = Convert.ToInt32(Viewer.Width * value);
+    }
+
+    internal float HeightScaleFactor
+    {
+        init => Viewer.Height = Convert.ToInt32(Viewer.Height * value);
     }
 
     internal GViewer Viewer { get; }
