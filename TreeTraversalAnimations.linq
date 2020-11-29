@@ -5,13 +5,25 @@
   <Namespace>Microsoft.Msagl.GraphViewerGdi</Namespace>
 </Query>
 
-var root = N("A", N("B", L("D"), L("E")), N("C", L("F"), L("G")));
+const bool repeatForever = true;
+
+var root = N("A",
+             N("B",
+               L("D"), L("E")),
+             N("C",
+               N("F",
+                 L("H"), L("I")),
+                 L("G")));
+
 var tree = new DrawingTree(root);
+
 tree.Show();
 
-await tree.PreorderLeftToRightRecursive(root);
-await tree.PreorderRightToLeftIterative(root);
-await tree.LevelOrderLeftToRight(root);
+do {
+    await tree.PreorderLeftToRightRecursive(root);
+    await tree.PreorderRightToLeftIterative(root);
+    await tree.LevelOrderLeftToRight(root);
+} while (repeatForever);
 
 static TreeNode<T> N<T>(T key, TreeNode<T>? left, TreeNode<T>? right)
     => new TreeNode<T>(key, left, right);
@@ -26,6 +38,7 @@ internal sealed class DrawingTree {
     internal DrawingTree(TreeNode<string> root)
     {
         _viewer = new() { Graph = _graph };
+        _viewer.HandleCreated += viewer_HandleCreated;
         BuildTreeGraph(root);
     }
 
@@ -83,6 +96,11 @@ internal sealed class DrawingTree {
         private readonly Graph _graph;
     }
 
+    private static int ThreadId => Thread.CurrentThread.ManagedThreadId;
+
+    private static void viewer_HandleCreated(object? sender, EventArgs e)
+        => $"Graph viewer handle created on thread {ThreadId}.".Dump();
+
     private void BuildTreeGraph(TreeNode<string> root)
     {
         var queue = new Queue<(TreeNode<string>? parent,
@@ -121,9 +139,16 @@ internal sealed class DrawingTree {
         SetColor(flashColor);
         await Task.Delay(1000);
         SetColor(Color.White);
+
+        if (_firstHighlight) {
+            _firstHighlight = false;
+            $"Highlighting on thread {ThreadId}.".Dump();
+        }
     }
 
     private readonly Graph _graph = new();
     
     private readonly GViewer _viewer;
+
+    private bool _firstHighlight = true;
 }
