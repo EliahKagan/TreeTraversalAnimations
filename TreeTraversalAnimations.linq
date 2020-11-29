@@ -1,18 +1,17 @@
 <Query Kind="Statements">
   <NuGetReference>AutomaticGraphLayout.GraphViewerGDI</NuGetReference>
+  <Namespace>System.Threading.Tasks</Namespace>
+  <Namespace>Microsoft.Msagl.Drawing</Namespace>
+  <Namespace>Microsoft.Msagl.GraphViewerGdi</Namespace>
 </Query>
-
-using System.Threading.Tasks;
-using Microsoft.Msagl.Drawing;
-using Microsoft.Msagl.GraphViewerGdi;
 
 var root = N("A", N("B", L("D"), L("E")), N("C", L("F"), L("G")));
 var tree = new DrawingTree(root);
 tree.Show();
 
-await tree.PreorderTraverseRecursive(root);
-await tree.PreorderTraverseIterative(root);
-await tree.LevelOrderTraverse(root);
+await tree.PreorderLeftToRightRecursive(root);
+await tree.PreorderRightToLeftIterative(root);
+await tree.LevelOrderLeftToRight(root);
 
 static TreeNode<T> N<T>(T key, TreeNode<T>? left, TreeNode<T>? right)
     => new TreeNode<T>(key, left, right);
@@ -32,16 +31,16 @@ internal sealed class DrawingTree {
 
     internal void Show() => _viewer.Dump();
 
-    internal async Task PreorderTraverseRecursive(TreeNode<string>? root)
+    internal async Task PreorderLeftToRightRecursive(TreeNode<string>? root)
     {
         if (root is null) return;
 
         await HighlightNodeAsync(root, Color.Magenta);
-        await PreorderTraverseRecursive(root.Left);
-        await PreorderTraverseRecursive(root.Right);
+        await PreorderLeftToRightRecursive(root.Left);
+        await PreorderLeftToRightRecursive(root.Right);
     }
 
-    internal async Task PreorderTraverseIterative(TreeNode<string>? root)
+    internal async Task PreorderRightToLeftIterative(TreeNode<string>? root)
     {
         var stack = new Stack<TreeNode<string>?>();
         
@@ -50,12 +49,12 @@ internal sealed class DrawingTree {
             if (node is null) continue;
             
             await HighlightNodeAsync(node, Color.Green);
-            stack.Push(node.Right);
             stack.Push(node.Left);
+            stack.Push(node.Right);
         }
     }
 
-    internal async Task LevelOrderTraverse(TreeNode<string>? root)
+    internal async Task LevelOrderLeftToRight(TreeNode<string>? root)
     {
         var queue = new Queue<TreeNode<string>?>();
         
