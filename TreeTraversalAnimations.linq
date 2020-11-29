@@ -1,8 +1,11 @@
 <Query Kind="Statements">
   <NuGetReference>AutomaticGraphLayout.GraphViewerGDI</NuGetReference>
-  <Namespace>System.Threading.Tasks</Namespace>
   <Namespace>Microsoft.Msagl.Drawing</Namespace>
   <Namespace>Microsoft.Msagl.GraphViewerGdi</Namespace>
+  <Namespace>Size = System.Drawing.Size</Namespace>
+  <Namespace>SizeF = System.Drawing.SizeF</Namespace>
+  <Namespace>System.Threading.Tasks</Namespace>
+  <Namespace>System.Windows.Forms</Namespace>
 </Query>
 
 const bool repeatForever = true;
@@ -15,15 +18,45 @@ var root = N("A",
                  L("H"), L("I")),
                  L("G")));
 
-var tree = new DrawingTree(root);
+var tree = new DrawingTree(root) {
+    WidthScaleFactor = 0.6f,
+};
 
-tree.Show();
+var legend = new WebBrowser {
+    Url = GetDocUrl("legend.html"),
+    AutoSize = true,
+};
+legend.DocumentCompleted += delegate {
+    var oldSize = legend.Document.Body.ScrollRectangle.Size;
+    var newSize = new SizeF(width: oldSize.Width * 0.7f,
+                            height: oldSize.Height * 1.1f);
+    legend.Size = Size.Round(newSize);
+};
+
+var ui = new TableLayoutPanel {
+    RowCount = 1,
+    ColumnCount = 2,
+    GrowStyle = TableLayoutPanelGrowStyle.FixedSize,
+    AutoSize = true,
+    AutoSizeMode = AutoSizeMode.GrowAndShrink,
+    AutoScroll = true,
+};
+ui.Controls.Add(legend);
+ui.Controls.Add(tree.Viewer);
+ui.Dump("Tree Traversal Animation");
 
 do {
     await tree.PreorderLeftToRightRecursive(root);
     await tree.PreorderRightToLeftIterative(root);
     await tree.LevelOrderLeftToRight(root);
 } while (repeatForever);
+
+static Uri GetDocUrl(string filename)
+    => new(Path.Combine(GetQueryDirectory(), filename));
+
+static string GetQueryDirectory()
+    => Path.GetDirectoryName(Util.CurrentQueryPath)
+        ?? throw new NotSupportedException("Can't find query directory");
 
 static TreeNode<T> N<T>(T key, TreeNode<T>? left, TreeNode<T>? right)
     => new TreeNode<T>(key, left, right);
@@ -37,12 +70,17 @@ internal sealed record TreeNode<T>(T Key,
 internal sealed class DrawingTree {
     internal DrawingTree(TreeNode<string> root)
     {
-        _viewer = new() { Graph = _graph };
-        _viewer.HandleCreated += viewer_HandleCreated;
+        Viewer = new() { Graph = _graph };
+        Viewer.HandleCreated += viewer_HandleCreated;
         BuildTreeGraph(root);
     }
 
-    internal void Show() => _viewer.Dump();
+    internal float WidthScaleFactor
+    {
+        init => Viewer.Width = Convert.ToInt32(Viewer.Width * value);
+    }
+
+    internal GViewer Viewer { get; }
 
     internal async Task PreorderLeftToRightRecursive(TreeNode<string>? root)
     {
@@ -121,7 +159,7 @@ internal sealed class DrawingTree {
     {
         $"Adding Edge {parent.Key} -> {child.Key}".Dump();
 
-        using var mutator = new Mutator(_viewer);
+        using var mutator = new Mutator(Viewer);
         _graph.AddEdge(parent.Key, child.Key);
     }
 
@@ -132,7 +170,7 @@ internal sealed class DrawingTree {
         
         void SetColor(Color color)
         {
-            using var mutator = new Mutator(_viewer);
+            using var mutator = new Mutator(Viewer);
             vertex.Attr.FillColor = color;
         }
         
@@ -147,8 +185,6 @@ internal sealed class DrawingTree {
     }
 
     private readonly Graph _graph = new();
-    
-    private readonly GViewer _viewer;
 
     private bool _firstHighlight = true;
 }

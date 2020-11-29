@@ -1,0 +1,17 @@
+div {
+  border: 1px solid black;
+  height: 5em;
+  width: 5em;
+}
+
+.recursive {
+  background-color: orange;
+}
+
+.stack {
+  background-color: red;
+}
+
+.queue {
+  background-color: blue;
+}
