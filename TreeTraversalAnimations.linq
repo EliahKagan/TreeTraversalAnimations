@@ -35,7 +35,7 @@ internal sealed class DrawingTree {
     {
         if (root is null) return;
 
-        await HighlightNodeAsync(root, Color.Magenta);
+        await HighlightNodeAsync(root, Color.Orange);
         await PreorderLeftToRightRecursive(root.Left);
         await PreorderLeftToRightRecursive(root.Right);
     }
@@ -48,7 +48,7 @@ internal sealed class DrawingTree {
             var node = stack.Pop();
             if (node is null) continue;
             
-            await HighlightNodeAsync(node, Color.Green);
+            await HighlightNodeAsync(node, Color.Red);
             stack.Push(node.Left);
             stack.Push(node.Right);
         }
