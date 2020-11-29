@@ -8,6 +8,8 @@
   <Namespace>System.Windows.Forms</Namespace>
 </Query>
 
+#nullable enable
+
 const bool repeatForever = true;
 
 var root = N("A",
