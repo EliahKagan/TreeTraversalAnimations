@@ -50,8 +50,30 @@ ui.Dump("Tree Traversal Animation");
 
 do {
     await tree.PreorderLeftToRightRecursive(root);
+    await tree.InorderLeftToRightRecursive(root);
+    await tree.PostorderLeftToRightRecursive(root);
+    await tree.GeneralLeftToRightRecursive(root);
+
+    await Pause();
+
     await tree.PreorderRightToLeftIterative(root);
     await tree.LevelOrderLeftToRight(root);
+
+    await Pause();
+
+    await tree.PreorderLeftToRightIterativeAlt(root);
+    await tree.InorderLeftToRightIterativeAlt(root);
+    await tree.PostorderLeftToRightIterativeAlt(root);
+    await tree.GeneralLeftToRightIterativeAlt(root);
+
+    await Pause();
+
+    await tree.PreorderLeftToRightIterativeRec(root);
+    await tree.InorderLeftToRightIterativeRec(root);
+    await tree.PostorderLeftToRightIterativeRec(root);
+    await tree.GeneralLeftToRightIterativeRec(root);
+
+    await Pause();
 } while (repeatForever);
 
 static Uri GetDocUrl(string filename)
@@ -60,6 +82,8 @@ static Uri GetDocUrl(string filename)
 static string GetQueryDirectory()
     => Path.GetDirectoryName(Util.CurrentQueryPath)
         ?? throw new NotSupportedException("Can't find query directory");
+
+static async Task Pause() => await Task.Delay(1000);
 
 static TreeNode<T> N<T>(T key, TreeNode<T>? left, TreeNode<T>? right)
     => new TreeNode<T>(key, left, right);
@@ -99,14 +123,43 @@ internal sealed class DrawingTree {
         await PreorderLeftToRightRecursive(root.Right);
     }
 
+    internal async Task InorderLeftToRightRecursive(TreeNode<string>? root)
+    {
+        if (root is null) return;
+
+        await InorderLeftToRightRecursive(root.Left);
+        await HighlightNodeAsync(root, Color.Gold);
+        await InorderLeftToRightRecursive(root.Right);
+    }
+
+    internal async Task PostorderLeftToRightRecursive(TreeNode<string>? root)
+    {
+        if (root is null) return;
+
+        await PostorderLeftToRightRecursive(root.Left);
+        await PostorderLeftToRightRecursive(root.Right);
+        await HighlightNodeAsync(root, Color.YellowGreen);
+    }
+
+    internal async Task GeneralLeftToRightRecursive(TreeNode<string>? root)
+    {
+        if (root is null) return;
+
+        await HighlightNodeAsync(root, Color.Orange);
+        await GeneralLeftToRightRecursive(root.Left);
+        await HighlightNodeAsync(root, Color.Gold);
+        await GeneralLeftToRightRecursive(root.Right);
+        await HighlightNodeAsync(root, Color.YellowGreen);
+    }
+
     internal async Task PreorderRightToLeftIterative(TreeNode<string>? root)
     {
         var stack = new Stack<TreeNode<string>?>();
-        
+
         for (stack.Push(root); stack.Count != 0; ) {
             var node = stack.Pop();
             if (node is null) continue;
-            
+
             await HighlightNodeAsync(node, Color.Red);
             stack.Push(node.Left);
             stack.Push(node.Right);
@@ -116,14 +169,262 @@ internal sealed class DrawingTree {
     internal async Task LevelOrderLeftToRight(TreeNode<string>? root)
     {
         var queue = new Queue<TreeNode<string>?>();
-        
+
         for (queue.Enqueue(root); queue.Count != 0; ) {
             var node = queue.Dequeue();
             if (node is null) continue;
-            
+
             await HighlightNodeAsync(node, Color.Blue);
             queue.Enqueue(node.Left);
             queue.Enqueue(node.Right);
+        }
+    }
+
+    internal async Task PreorderLeftToRightIterativeAlt(TreeNode<string>? root)
+    {
+        var stack = new Stack<TreeNode<string>>();
+
+        while (stack.Count != 0 || root is not null) {
+            // Go left as far as possible, performing the preorder action.
+            for (; root is not null; root = root.Left) {
+                await HighlightNodeAsync(root, Color.CornflowerBlue);
+                stack.Push(root);
+            }
+
+            var cur = stack.Pop();
+
+            // If there is a right subtree, visit that next.
+            root = cur.Right;
+        }
+    }
+
+    internal async Task InorderLeftToRightIterativeAlt(TreeNode<string>? root)
+    {
+        var stack = new Stack<TreeNode<string>>();
+
+        while (stack.Count != 0 || root is not null) {
+            // Go left as far as possible.
+            for (; root is not null; root = root.Left) stack.Push(root);
+
+            var cur = stack.Pop();
+
+            // Do the inorder action.
+            await HighlightNodeAsync(cur, Color.Chartreuse);
+
+            // If there is a right subtree, visit that next.
+            root = cur.Right;
+        }
+    }
+
+    internal async Task
+    PostorderLeftToRightIterativeAlt(TreeNode<string>? root)
+    {
+        var stack = new Stack<TreeNode<string>>();
+        TreeNode<string>? post = null;
+
+        while (stack.Count != 0 || root is not null) {
+            // Go left as far as possible.
+            for (; root is not null; root = root.Left) stack.Push(root);
+
+            var cur = stack.Peek();
+
+            if (cur.Right is not null && cur.Right != post) {
+                // The right subtree is nonempty and unvisited. Go there next.
+                root = cur.Right;
+            } else {
+                // The right subtree is empty or already explored.
+                // Do the postorder action and retreat.
+                post = cur;
+                await HighlightNodeAsync(post, Color.DarkSalmon);
+                stack.Pop();
+            }
+        }
+    }
+
+    internal async Task GeneralLeftToRightIterativeAlt(TreeNode<string>? root)
+    {
+        var stack = new Stack<TreeNode<string>>();
+        TreeNode<string>? post = null;
+
+        while (stack.Count != 0 || root is not null) {
+            // Go left as far as possible, doing the preorder action.
+            for (; root is not null; root = root.Left) {
+                await HighlightNodeAsync(root, Color.CornflowerBlue);
+                stack.Push(root);
+            }
+
+            var cur = stack.Peek();
+
+            if (cur.Right is null || cur.Right != post) {
+                // We've been left but not right. Do the inorder action.
+                await HighlightNodeAsync(cur, Color.Chartreuse);
+            }
+
+            if (cur.Right is not null && cur.Right != post) {
+                // The right subtree is nonempty and unvisited. Go there next.
+                root = cur.Right;
+            } else {
+                // The right subtree is empty or already explored.
+                // Do the postorder action and retreat.
+                post = cur;
+                await HighlightNodeAsync(post, Color.DarkSalmon);
+                stack.Pop();
+            }
+        }
+    }
+
+    internal async Task PreorderLeftToRightIterativeRec(TreeNode<string>? root)
+    {
+        var stack = new Stack<Frame<string>>();
+
+        for (stack.Push(new(root, State.GoLeft)); stack.Count != 0; ) {
+            var frame = stack.Peek();
+
+            switch (frame.State) {
+            case State.GoLeft:
+                if (frame.Node is null) {
+                    stack.Pop();
+                    continue;
+                }
+
+                await HighlightNodeAsync(frame.Node, Color.Cyan);
+                frame.State = State.GoRight;
+                stack.Push(new(frame.Node.Left, State.GoLeft));
+                break;
+
+            case State.GoRight:
+                Debug.Assert(frame.Node is not null);
+
+                frame.State = State.Retreat;
+                stack.Push(new(frame.Node.Right, State.GoLeft));
+                break;
+
+            case State.Retreat:
+                Debug.Assert(frame.Node is not null);
+
+                stack.Pop();
+                break;
+
+            default:
+                throw new NotSupportedException("Bug: invalid state");
+            }
+        }
+    }
+
+    internal async Task InorderLeftToRightIterativeRec(TreeNode<string>? root)
+    {
+        var stack = new Stack<Frame<string>>();
+
+        for (stack.Push(new(root, State.GoLeft)); stack.Count != 0; ) {
+            var frame = stack.Peek();
+
+            switch (frame.State) {
+            case State.GoLeft:
+                if (frame.Node is null) {
+                    stack.Pop();
+                    continue;
+                }
+
+                frame.State = State.GoRight;
+                stack.Push(new(frame.Node.Left, State.GoLeft));
+                break;
+
+            case State.GoRight:
+                Debug.Assert(frame.Node is not null);
+
+                await HighlightNodeAsync(frame.Node, Color.Yellow);
+                frame.State = State.Retreat;
+                stack.Push(new(frame.Node.Right, State.GoLeft));
+                break;
+
+            case State.Retreat:
+                Debug.Assert(frame.Node is not null);
+
+                stack.Pop();
+                break;
+
+            default:
+                throw new NotSupportedException("Bug: invalid state");
+            }
+        }
+    }
+
+    internal async Task
+    PostorderLeftToRightIterativeRec(TreeNode<string>? root)
+    {
+        var stack = new Stack<Frame<string>>();
+
+        for (stack.Push(new(root, State.GoLeft)); stack.Count != 0; ) {
+            var frame = stack.Peek();
+
+            switch (frame.State) {
+            case State.GoLeft:
+                if (frame.Node is null) {
+                    stack.Pop();
+                    continue;
+                }
+
+                frame.State = State.GoRight;
+                stack.Push(new(frame.Node.Left, State.GoLeft));
+                break;
+
+            case State.GoRight:
+                Debug.Assert(frame.Node is not null);
+
+                frame.State = State.Retreat;
+                stack.Push(new(frame.Node.Right, State.GoLeft));
+                break;
+
+            case State.Retreat:
+                Debug.Assert(frame.Node is not null);
+
+                await HighlightNodeAsync(frame.Node, Color.Magenta);
+                stack.Pop();
+                break;
+
+            default:
+                throw new NotSupportedException("Bug: invalid state");
+            }
+        }
+    }
+
+    internal async Task GeneralLeftToRightIterativeRec(TreeNode<string>? root)
+    {
+        var stack = new Stack<Frame<string>>();
+
+        for (stack.Push(new(root, State.GoLeft)); stack.Count != 0; ) {
+            var frame = stack.Peek();
+
+            switch (frame.State) {
+            case State.GoLeft:
+                if (frame.Node is null) {
+                    stack.Pop();
+                    continue;
+                }
+
+                await HighlightNodeAsync(frame.Node, Color.Cyan);
+                frame.State = State.GoRight;
+                stack.Push(new(frame.Node.Left, State.GoLeft));
+                break;
+
+            case State.GoRight:
+                Debug.Assert(frame.Node is not null);
+
+                await HighlightNodeAsync(frame.Node, Color.Yellow);
+                frame.State = State.Retreat;
+                stack.Push(new(frame.Node.Right, State.GoLeft));
+                break;
+
+            case State.Retreat:
+                Debug.Assert(frame.Node is not null);
+
+                await HighlightNodeAsync(frame.Node, Color.Magenta);
+                stack.Pop();
+                break;
+
+            default:
+                throw new NotSupportedException("Bug: invalid state");
+            }
         }
     }
 
@@ -134,11 +435,11 @@ internal sealed class DrawingTree {
             _graph = _viewer.Graph;
             _viewer.Graph = null;
         }
-        
+
         public void Dispose() => _viewer.Graph = _graph;
-        
+
         private readonly GViewer _viewer;
-        
+
         private readonly Graph _graph;
     }
 
@@ -175,15 +476,15 @@ internal sealed class DrawingTree {
                                           Color flashColor)
     {
         var vertex = _graph.FindNode(node.Key);
-        
+
         void SetColor(Color color)
         {
             using var mutator = new Mutator(Viewer);
             vertex.Attr.FillColor = color;
         }
-        
+
         SetColor(flashColor);
-        await Task.Delay(1000);
+        await Task.Delay(500);
         SetColor(Color.White);
 
         if (_firstHighlight) {
@@ -195,4 +496,19 @@ internal sealed class DrawingTree {
     private readonly Graph _graph = new();
 
     private bool _firstHighlight = true;
+}
+
+internal sealed class Frame<T> {
+    internal Frame(TreeNode<T>? node, State state)
+        => (Node, State) = (node, state);
+
+    internal TreeNode<T>? Node { get; }
+
+    internal State State { get; set; }
+}
+
+internal enum State {
+    GoLeft,
+    GoRight,
+    Retreat,
 }
