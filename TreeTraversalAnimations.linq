@@ -8,6 +8,8 @@
   <Namespace>System.Windows.Forms</Namespace>
 </Query>
 
+// TreeTraversalAnimations.linq - Simple binary-tree traversal visualizer.
+
 #nullable enable
 
 const bool repeatForever = true;
