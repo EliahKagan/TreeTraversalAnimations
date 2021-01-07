@@ -8,6 +8,8 @@
   <Namespace>System.Windows.Forms</Namespace>
 </Query>
 
+// TreeTraversalAnimations.linq - Simple binary-tree traversal visualizer.
+
 #nullable enable
 
 const bool repeatForever = true;
@@ -102,11 +104,11 @@ internal sealed class DrawingTree {
     internal async Task PreorderRightToLeftIterative(TreeNode<string>? root)
     {
         var stack = new Stack<TreeNode<string>?>();
-        
+
         for (stack.Push(root); stack.Count != 0; ) {
             var node = stack.Pop();
             if (node is null) continue;
-            
+
             await HighlightNodeAsync(node, Color.Red);
             stack.Push(node.Left);
             stack.Push(node.Right);
@@ -116,11 +118,11 @@ internal sealed class DrawingTree {
     internal async Task LevelOrderLeftToRight(TreeNode<string>? root)
     {
         var queue = new Queue<TreeNode<string>?>();
-        
+
         for (queue.Enqueue(root); queue.Count != 0; ) {
             var node = queue.Dequeue();
             if (node is null) continue;
-            
+
             await HighlightNodeAsync(node, Color.Blue);
             queue.Enqueue(node.Left);
             queue.Enqueue(node.Right);
@@ -134,11 +136,11 @@ internal sealed class DrawingTree {
             _graph = _viewer.Graph;
             _viewer.Graph = null;
         }
-        
+
         public void Dispose() => _viewer.Graph = _graph;
-        
+
         private readonly GViewer _viewer;
-        
+
         private readonly Graph _graph;
     }
 
@@ -175,13 +177,13 @@ internal sealed class DrawingTree {
                                           Color flashColor)
     {
         var vertex = _graph.FindNode(node.Key);
-        
+
         void SetColor(Color color)
         {
             using var mutator = new Mutator(Viewer);
             vertex.Attr.FillColor = color;
         }
-        
+
         SetColor(flashColor);
         await Task.Delay(1000);
         SetColor(Color.White);
