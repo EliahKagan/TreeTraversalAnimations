@@ -27,6 +27,10 @@ small {
   line-height: 1.2;
 }
 
+div.item {
+  margin: 1rem 0;
+}
+
 div.swatch {
   border: 1px solid black;
   height: 5rem;
@@ -41,10 +45,42 @@ hr {
   background-color: orange;
 }
 
+.recursive-inorder {
+  background-color: gold;
+}
+
+.recursive-postorder {
+  background-color: yellowgreen;
+}
+
 .stack-preorder {
   background-color: red;
 }
 
 .queue {
   background-color: blue;
+}
+
+.stack-alt-preorder {
+  background-color: cornflowerblue;
+}
+
+.stack-alt-inorder {
+  background-color: chartreuse;
+}
+
+.stack-alt-postorder {
+  background-color: darksalmon;
+}
+
+.state-machine-preorder {
+  background-color: cyan;
+}
+
+.state-machine-inorder {
+  background-color: yellow;
+}
+
+.state-machine-postorder {
+  background-color: magenta;
 }
