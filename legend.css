@@ -13,10 +13,28 @@
   PERFORMANCE OF THIS SOFTWARE.
 */
 
-div {
+html {
+  font-size: 1em;
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+}
+
+small {
+  display: block;
+  font-size: .9rem;
+  line-height: 1.2;
+}
+
+div.swatch {
   border: 1px solid black;
-  height: 5em;
-  width: 5em;
+  height: 5rem;
+  width: 5rem;
+}
+
+hr {
+  margin: 1rem 0;
 }
 
 .recursive-preorder {
