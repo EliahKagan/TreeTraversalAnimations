@@ -1,5 +1,5 @@
 <Query Kind="Statements">
-  <NuGetReference>AutomaticGraphLayout.GraphViewerGDI</NuGetReference>
+  <NuGetReference Version="1.1.12">AutomaticGraphLayout.GraphViewerGDI</NuGetReference>
   <Namespace>Microsoft.Msagl.Drawing</Namespace>
   <Namespace>Microsoft.Msagl.GraphViewerGdi</Namespace>
   <Namespace>System.Threading.Tasks</Namespace>
