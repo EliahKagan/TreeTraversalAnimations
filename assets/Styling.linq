@@ -18,7 +18,7 @@
 
 Util.RawHtml(@"<style>
     h1.headingpresenter {
-        font-size: 1.4rem;
+        font-size: 1.35rem;
     }
 
     fieldset {
@@ -29,7 +29,7 @@ Util.RawHtml(@"<style>
 internal static class Styling {
     internal static T StyledDump<T>(this T self, string? label = null)
     {
-        Util.WithStyle(self, "font-size: 125%").Dump(label);
+        Util.WithStyle(self, "font-size: 1.2em").Dump(label);
         return self;
     }
 }
