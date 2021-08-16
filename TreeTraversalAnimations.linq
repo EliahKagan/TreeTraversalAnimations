@@ -98,7 +98,7 @@ static string GetQueryDirectory()
     => Path.GetDirectoryName(Util.CurrentQueryPath)
         ?? throw new NotSupportedException("Can't find query directory");
 
-static async Task Pause() => await Task.Delay(1000);
+static async Task Pause() => await Task.Delay(2000);
 
 static TreeNode<T> N<T>(T key, TreeNode<T>? left, TreeNode<T>? right)
     => new TreeNode<T>(key, left, right);
@@ -499,7 +499,7 @@ internal sealed class DrawingTree {
         }
 
         SetColor(flashColor);
-        await Task.Delay(500);
+        await Task.Delay(700);
         SetColor(Color.White);
 
         if (_firstHighlight) {
