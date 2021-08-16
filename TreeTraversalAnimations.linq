@@ -44,7 +44,7 @@ var root = N("A",
                  L("H"), L("I")),
                  L("G")));
 
-var tree = new DrawingTree(root) {
+var tree = new DrawingTree(root, interval: (full ? 700 : 1000)) {
     WidthScaleFactor = 0.8f,
     HeightScaleFactor = 1.2f,
 };
@@ -132,8 +132,9 @@ internal sealed record TreeNode<T>(T Key,
                                    TreeNode<T>? Right);
 
 internal sealed class DrawingTree {
-    internal DrawingTree(TreeNode<string> root)
+    internal DrawingTree(TreeNode<string> root, int interval)
     {
+        _interval = interval;
         Viewer = new() { Graph = _graph };
         Viewer.HandleCreated += viewer_HandleCreated;
         BuildTreeGraph(root);
@@ -521,7 +522,7 @@ internal sealed class DrawingTree {
         }
 
         SetColor(flashColor);
-        await Task.Delay(700);
+        await Task.Delay(_interval);
         SetColor(Color.White);
 
         if (_firstHighlight) {
@@ -531,6 +532,8 @@ internal sealed class DrawingTree {
     }
 
     private readonly Graph _graph = new();
+
+    private readonly int _interval;
 
     private bool _firstHighlight = true;
 }
