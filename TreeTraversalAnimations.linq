@@ -21,18 +21,19 @@
 // OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
 // CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-#load "assets/launcher.linq"
+#load "assets/Launcher.linq"
+#load "assets/Styling.linq"
 
 #nullable enable
 
 const bool repeatForever = true;
 
-var full = await RunLauncherAsync();
+var full = await Launcher.RunAsync();
 
 if (full) {
-    "Running in full mode (more algorithms).".Dump();
+    "Running in full mode (more algorithms).".StyledDump();
 } else {
-    "Running in simple mode (fewer algorithms).".Dump();
+    "Running in simple mode (fewer algorithms).".StyledDump();
 }
 
 var root = N("A",
@@ -482,7 +483,7 @@ internal sealed class DrawingTree {
     private static int ThreadId => Thread.CurrentThread.ManagedThreadId;
 
     private static void viewer_HandleCreated(object? sender, EventArgs e)
-        => $"Graph viewer handle created on thread {ThreadId}.".Dump();
+        => $"Graph viewer handle created on thread {ThreadId}.".StyledDump();
 
     private void BuildTreeGraph(TreeNode<string> root)
     {
@@ -502,7 +503,7 @@ internal sealed class DrawingTree {
 
     private void AddEdge(TreeNode<string> parent, TreeNode<string> child)
     {
-        $"Adding Edge {parent.Key} -> {child.Key}".Dump();
+        $"Adding Edge {parent.Key} -> {child.Key}".StyledDump();
 
         using var mutator = new Mutator(Viewer);
         _graph.AddEdge(parent.Key, child.Key);
@@ -525,7 +526,7 @@ internal sealed class DrawingTree {
 
         if (_firstHighlight) {
             _firstHighlight = false;
-            $"Highlighting on thread {ThreadId}.".Dump();
+            $"Highlighting on thread {ThreadId}.".StyledDump();
         }
     }
 
