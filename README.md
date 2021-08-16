@@ -145,9 +145,9 @@ order).
   inorder, and postorder actions are all performed
   (`GeneralLeftToRightIterativeAlt`).
 
-Althoug I gave all those methods names ending in `Alt` to avoid obscuring their
-close relationship to each other, it&rsquo;s really only the preorder traversal
-that is an alternative to a more common implementation.
+Although I gave all those methods names ending in `Alt` to avoid obscuring
+their close relationship to each other, it&rsquo;s really only the preorder
+traversal that is an alternative to a more common implementation.
 
 These iterative techniques more closely resemble how the recursive algorithm
 works, though they are not the same as the recursive algorithm.
