@@ -10,7 +10,7 @@
 
 // TreeTraversalAnimations.linq - Simple binary-tree traversal visualizer.
 //
-// Copyright (C) 2020 Eliah Kagan <degeneracypressure@gmail.com>
+// Copyright (C) 2020, 2021 Eliah Kagan <degeneracypressure@gmail.com>
 //
 // Permission to use, copy, modify, and/or distribute this software for any
 // purpose with or without fee is hereby granted.
@@ -45,10 +45,8 @@ var legend = new WebBrowser {
     AutoSize = true,
 };
 legend.DocumentCompleted += delegate {
-    var oldSize = legend.Document.Body.ScrollRectangle.Size;
-    var newSize = new SizeF(width: oldSize.Width * 0.8f,
-                            height: oldSize.Height * 1.1f);
-    legend.Size = Size.Round(newSize);
+    var oldWidth = legend.Document.Body.ScrollRectangle.Width;
+    legend.Width = Convert.ToInt32(oldWidth * 0.8f);
 };
 
 var ui = new TableLayoutPanel {
@@ -61,6 +59,7 @@ var ui = new TableLayoutPanel {
 };
 ui.Controls.Add(legend);
 ui.Controls.Add(tree.Viewer);
+ui.Resize += delegate { legend.Height = ui.ClientSize.Height; };
 ui.Dump("Tree Traversal Animation");
 
 do {
