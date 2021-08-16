@@ -1,6 +1,5 @@
 <Query Kind="Statements">
   <NuGetReference>AutomaticGraphLayout.GraphViewerGDI</NuGetReference>
-  <Namespace>LC = LINQPad.Controls</Namespace>
   <Namespace>Microsoft.Msagl.Drawing</Namespace>
   <Namespace>Microsoft.Msagl.GraphViewerGdi</Namespace>
   <Namespace>System.Threading.Tasks</Namespace>
@@ -22,45 +21,19 @@
 // OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
 // CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
+#load "assets/launcher.linq"
+
 #nullable enable
 
 const bool repeatForever = true;
 
-Util.CreateSynchronizationContext();
-var tcs = new TaskCompletionSource<bool>();
+var full = await RunLauncherAsync();
 
-var simpleMode = new LC.RadioButton(groupName: "mode-option",
-                                    text: "Simple",
-                                    isChecked: true);
-
-var moreAlgorithmsMode = new LC.RadioButton(groupName: "mode-option",
-                                            text: "More algorithms",
-                                            isChecked: false);
-
-var launchedLabel = new LC.Label {
-    Text = "(Launched. You can re-run the LINQPad query to re-enable the launcher.)",
-    Visible = false,
-};
-
-var launch = new LC.Button("Launch!", sender => {
-    sender.Enabled = false;
-    simpleMode.Enabled = false;
-    moreAlgorithmsMode.Enabled = false;
-
-    launchedLabel.Visible = true;
-    tcs.SetResult(moreAlgorithmsMode.Checked);
-});
-
-new LC.StackPanel(horizontal: false,
-    new LC.FieldSet("Select mode",
-        new LC.StackPanel(horizontal: false,
-                          simpleMode,
-                          moreAlgorithmsMode)),
-    new LC.StackPanel(horizontal: false,
-        launch,
-        launchedLabel)).Dump("Launcher");
-
-await tcs.Task;
+if (full) {
+    "Running in full mode (more algorithms).".Dump();
+} else {
+    "Running in simple mode (fewer algorithms).".Dump();
+}
 
 var root = N("A",
              N("B",
@@ -76,7 +49,7 @@ var tree = new DrawingTree(root) {
 };
 
 var legend = new WebBrowser {
-    Url = GetDocUrl("legend.html"),
+    Url = GetDocUrl(full ? "legend.html" : "legend-simple.html"),
     AutoSize = true,
 };
 legend.DocumentCompleted += delegate {
@@ -97,36 +70,50 @@ ui.Controls.Add(tree.Viewer);
 ui.Resize += delegate { legend.Height = ui.ClientSize.Height; };
 ui.Dump("Tree Traversal Animation");
 
-do {
-    await tree.PreorderLeftToRightRecursive(root);
-    await tree.InorderLeftToRightRecursive(root);
-    await tree.PostorderLeftToRightRecursive(root);
-    await tree.GeneralLeftToRightRecursive(root);
+await (full ? RunFullAsync(tree, root) : RunSimpleAsync(tree, root));
 
-    await Pause();
+static async Task RunSimpleAsync(DrawingTree tree, TreeNode<string>? root)
+{
+    do {
+        await tree.PreorderLeftToRightRecursive(root);
+        await tree.PreorderRightToLeftIterative(root);
+        await tree.LevelOrderLeftToRight(root);
+    } while (repeatForever);
+}
 
-    await tree.PreorderRightToLeftIterative(root);
-    await tree.LevelOrderLeftToRight(root);
+static async Task RunFullAsync(DrawingTree tree, TreeNode<string>? root)
+{
+    do {
+        await tree.PreorderLeftToRightRecursive(root);
+        await tree.InorderLeftToRightRecursive(root);
+        await tree.PostorderLeftToRightRecursive(root);
+        await tree.GeneralLeftToRightRecursive(root);
 
-    await Pause();
+        await Pause();
 
-    await tree.PreorderLeftToRightIterativeAlt(root);
-    await tree.InorderLeftToRightIterativeAlt(root);
-    await tree.PostorderLeftToRightIterativeAlt(root);
-    await tree.GeneralLeftToRightIterativeAlt(root);
+        await tree.PreorderRightToLeftIterative(root);
+        await tree.LevelOrderLeftToRight(root);
 
-    await Pause();
+        await Pause();
 
-    await tree.PreorderLeftToRightIterativeRec(root);
-    await tree.InorderLeftToRightIterativeRec(root);
-    await tree.PostorderLeftToRightIterativeRec(root);
-    await tree.GeneralLeftToRightIterativeRec(root);
+        await tree.PreorderLeftToRightIterativeAlt(root);
+        await tree.InorderLeftToRightIterativeAlt(root);
+        await tree.PostorderLeftToRightIterativeAlt(root);
+        await tree.GeneralLeftToRightIterativeAlt(root);
 
-    await Pause();
-} while (repeatForever);
+        await Pause();
+
+        await tree.PreorderLeftToRightIterativeRec(root);
+        await tree.InorderLeftToRightIterativeRec(root);
+        await tree.PostorderLeftToRightIterativeRec(root);
+        await tree.GeneralLeftToRightIterativeRec(root);
+
+        await Pause();
+    } while (repeatForever);
+}
 
 static Uri GetDocUrl(string filename)
-    => new(Path.Combine(GetQueryDirectory(), filename));
+    => new(Path.Combine(GetQueryDirectory(), "assets", filename));
 
 static string GetQueryDirectory()
     => Path.GetDirectoryName(Util.CurrentQueryPath)
