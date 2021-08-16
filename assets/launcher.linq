@@ -28,12 +28,12 @@ static Task<bool> RunLauncherAsync()
     var tcs = new TaskCompletionSource<bool>();
 
     var simpleMode = new LC.RadioButton(groupName: "mode-option",
-                                        text: "Simple",
+                                        text: "Simple (fewer algorithms)",
                                         isChecked: true);
 
-    var moreAlgorithmsMode = new LC.RadioButton(groupName: "mode-option",
-                                                text: "More algorithms",
-                                                isChecked: false);
+    var fullMode = new LC.RadioButton(groupName: "mode-option",
+                                      text: "Full (more algorithms)",
+                                      isChecked: false);
 
     var launchedLabel = new LC.Label {
         Text = "(Launched. You can stop and re-run the LINQPad query to"
@@ -44,20 +44,17 @@ static Task<bool> RunLauncherAsync()
     var launch = new LC.Button("Launch!", sender => {
         sender.Enabled = false;
         simpleMode.Enabled = false;
-        moreAlgorithmsMode.Enabled = false;
+        fullMode.Enabled = false;
 
         launchedLabel.Visible = true;
-        tcs.SetResult(moreAlgorithmsMode.Checked);
+        tcs.SetResult(fullMode.Checked);
     });
 
     new LC.StackPanel(horizontal: false,
         new LC.FieldSet("Select mode",
-            new LC.StackPanel(horizontal: false,
-                              simpleMode,
-                              moreAlgorithmsMode)),
-        new LC.StackPanel(horizontal: false,
-            launch,
-            launchedLabel)).Dump("Launcher");
+            new LC.StackPanel(horizontal: false, simpleMode, fullMode)),
+        new LC.StackPanel(horizontal: false, launch, launchedLabel))
+    .Dump("Launcher");
 
     return tcs.Task;
 }
