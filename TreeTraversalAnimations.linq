@@ -1,5 +1,6 @@
 <Query Kind="Statements">
   <NuGetReference>AutomaticGraphLayout.GraphViewerGDI</NuGetReference>
+  <Namespace>LC = LINQPad.Controls</Namespace>
   <Namespace>Microsoft.Msagl.Drawing</Namespace>
   <Namespace>Microsoft.Msagl.GraphViewerGdi</Namespace>
   <Namespace>System.Threading.Tasks</Namespace>
@@ -24,6 +25,42 @@
 #nullable enable
 
 const bool repeatForever = true;
+
+Util.CreateSynchronizationContext();
+var tcs = new TaskCompletionSource<bool>();
+
+var simpleMode = new LC.RadioButton(groupName: "mode-option",
+                                    text: "Simple",
+                                    isChecked: true);
+
+var moreAlgorithmsMode = new LC.RadioButton(groupName: "mode-option",
+                                            text: "More algorithms",
+                                            isChecked: false);
+
+var launchedLabel = new LC.Label {
+    Text = "(Launched. You can re-run the LINQPad query to re-enable the launcher.)",
+    Visible = false,
+};
+
+var launch = new LC.Button("Launch!", sender => {
+    sender.Enabled = false;
+    simpleMode.Enabled = false;
+    moreAlgorithmsMode.Enabled = false;
+
+    launchedLabel.Visible = true;
+    tcs.SetResult(moreAlgorithmsMode.Checked);
+});
+
+new LC.StackPanel(horizontal: false,
+    new LC.FieldSet("Select mode",
+        new LC.StackPanel(horizontal: false,
+                          simpleMode,
+                          moreAlgorithmsMode)),
+    new LC.StackPanel(horizontal: false,
+        launch,
+        launchedLabel)).Dump("Launcher");
+
+await tcs.Task;
 
 var root = N("A",
              N("B",
