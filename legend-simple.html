@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+
+<!--
+  Copyright (C) 2020, 2021 Eliah Kagan <degeneracypressure@gmail.com>
+
+  Permission to use, copy, modify, and/or distribute this software for any
+  purpose with or without fee is hereby granted.
+
+  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+  REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+  AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+  INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+  LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+  OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+  PERFORMANCE OF THIS SOFTWARE.
+-->
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Tree Traversal Animation - Color Legend</title>
+    <link rel="stylesheet" href="legend.css">
+  </head>
+  <body>
+    <div class="swatch recursive-preorder" title="orange"></div>
+    <small>
+      Recursive
+      <br>
+      DFS left-to-right
+      <br>
+      (preorder)
+    </small>
+    <hr>
+    <div class="swatch stack-preorder" title="red"></div>
+    <small>
+      Stack
+      <br>
+      DFS right-to-left
+      <br>
+      (preorder)
+    </small>
+    <hr>
+    <div class="swatch queue" title="blue"></div>
+    <small>
+      Queue
+      <br>
+      BFS left-to-right
+      <br>
+      (level order)
+    </small>
+  </body>
+</html>
