@@ -2,8 +2,6 @@
   <NuGetReference>AutomaticGraphLayout.GraphViewerGDI</NuGetReference>
   <Namespace>Microsoft.Msagl.Drawing</Namespace>
   <Namespace>Microsoft.Msagl.GraphViewerGdi</Namespace>
-  <Namespace>Size = System.Drawing.Size</Namespace>
-  <Namespace>SizeF = System.Drawing.SizeF</Namespace>
   <Namespace>System.Threading.Tasks</Namespace>
   <Namespace>System.Windows.Forms</Namespace>
 </Query>
