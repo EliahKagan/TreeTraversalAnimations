@@ -154,7 +154,7 @@ works, though they are not the same as the recursive algorithm.
 
 #### Iterative implementations of the recursive algorithms
 
-These are depth-first iteratively implementations using state machines that
+These are depth-first iterative implementations using state machines that
 represent the process of making recursive calls. The stack is not of nodes, but
 instead of *frames*, where each frame holds a reference to a node as well as a
 datum indicating where to resume. Conceptually, the node field represents a
@@ -222,13 +222,13 @@ This program uses the [Microsoft Automatic Graph Layout
 licensed**](https://github.com/microsoft/automatic-graph-layout/blob/master/LICENSE)
 under the [MIT license](https://spdx.org/licenses/MIT.html):
 
-> Microsoft Automatic Graph Layout,MSAGL 
+> Microsoft Automatic Graph Layout,MSAGL
 >
 > Copyright (c) Microsoft Corporation
 >
-> All rights reserved. 
+> All rights reserved.
 >
-> MIT License 
+> MIT License
 >
 > Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
